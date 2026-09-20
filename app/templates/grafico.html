@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoodWi Insight AI - Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js para o Gráfico -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --card-bg: rgba(22, 31, 49, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-yellow: #f59e0b;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            background: rgba(15, 23, 42, 0.9);
+            border-right: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem 1.2rem;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin-top: 2.5rem;
+        }
+
+        .nav-link-btn {
+            width: 100%;
+            color: var(--text-muted);
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link-btn:hover, .nav-link-btn.active {
+            color: #fff;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.05));
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        /* Main Layout */
+        .main-content {
+            margin-left: 260px;
+            padding: 2.5rem;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .metric-title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 380px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+
+    <aside class="sidebar">
+        <div>
+            <div class="brand-logo">
+                <i class="fa-solid fa-bolt"></i> GoodWi AI
+            </div>
+            <ul class="nav-menu">
+    <li>
+        <a href="{% url 'home' %}" class="nav-link-btn">
+            <i class="fa-solid fa-house"></i> Início (Menu)
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'grafico' %}" class="nav-link-btn">
+            <i class="fa-solid fa-chart-line"></i> Dashboard
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'ia' %}" class="nav-link-btn">
+            <i class="fa-solid fa-robot"></i> Assistente IA
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'perfil' %}" class="nav-link-btn">
+            <i class="fa-solid fa-sliders"></i> Unidade Consumidora
+        </a>
+    </li>
+</ul>
+        </div>
+        <div class="text-muted small">
+            <i class="fa-solid fa-shield-halved"></i> GoodWi Insight v1.0
+        </div>
+    </aside>
+
+
+    <main class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold m-0">Monitoramento Energético em Tempo Real</h2>
+                <p class="text-muted small m-0">Simulação de consumo residencial instantâneo acoplado à rede GoodWi.</p>
+            </div>
+            <span class="status-badge bg-success bg-opacity-20 text-success border border-success">
+                <i class="fa-solid fa-circle-dot me-1 fa-beat"></i> Ao Vivo
+            </span>
+        </div>
+
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="glass-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="metric-title">Consumo Atual</span>
+                        <i class="fa-solid fa-bolt text-warning fs-5"></i>
+                    </div>
+                    <div class="metric-value text-warning" id="live-kw">3.4 kW/h</div>
+                    <span class="small text-muted"><i class="fa-solid fa-arrow-up text-danger me-1"></i>Oscilação padrão</span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="glass-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="metric-title">Geração Solar (Placa)</span>
+                        <i class="fa-solid fa-sun text-success fs-5"></i>
+                    </div>
+                    <div class="metric-value text-success" id="live-solar">1.8 kW/h</div>
+                    <span class="small text-muted"><i class="fa-solid fa-leaf text-success me-1"></i>Eficiência 82%</span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="glass-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="metric-title">Custo Estimado (Hora)</span>
+                        <i class="fa-solid fa-wallet text-info fs-5"></i>
+                    </div>
+                    <div class="metric-value text-info" id="live-cost">R$ 2.45</div>
+                    <span class="small text-muted">Tarifa residencial média</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold m-0"><i class="fa-solid fa-wave-square me-2 text-primary"></i>Fluxo de Consumo Elétrico (Tempo Real)</h5>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-secondary active">Ao Vivo</button>
+                    <button class="btn btn-outline-secondary">24h</button>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="energyChart"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <!-- Script de Simulação em Tempo Real -->
+    <script>
+        const ctx = document.getElementById('energyChart').getContext('2d');
+
+        // Gradiente azul bonito para o gráfico
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+        // Dados Iniciais
+        const initialLabels = Array.from({length: 10}, (_, i) => {
+            const d = new Date(Date.now() - (9 - i) * 2000);
+            return d.toLocaleTimeString('pt-BR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        });
+        const initialData = [2.1, 2.5, 2.3, 3.1, 2.8, 3.4, 3.0, 3.6, 3.2, 3.4];
+
+        // Configuração do Chart.js
+        const energyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: initialLabels,
+                datasets: [{
+                    label: 'Consumo Residencial (kW/h)',
+                    data: initialData,
+                    borderColor: '#3b82f6',
+                    borderWidth: 3,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#3b82f6',
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans' } }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#9ca3af' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#9ca3af' },
+                        suggestedMin: 1.0,
+                        suggestedMax: 5.0
+                    }
+                }
+            }
+        });
+
+        // Função para simular atualização em tempo real
+        function updateLiveSimulatedData() {
+            const now = new Date();
+            const timeLabel = now.toLocaleTimeString('pt-BR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            // Gera valor randômico simulando variação real de energia (ex: entre 1.8kW e 4.5kW)
+            const randomValue = (Math.random() * (4.2 - 1.8) + 1.8).toFixed(1);
+            const solarValue = (Math.random() * (2.2 - 1.2) + 1.2).toFixed(1);
+            const estimatedCost = (randomValue * 0.72).toFixed(2);
+
+            // Atualiza o gráfico
+            energyChart.data.labels.push(timeLabel);
+            energyChart.data.datasets[0].data.push(randomValue);
+
+            // Mantém apenas os últimos 10 pontos na tela
+            if (energyChart.data.labels.length > 10) {
+                energyChart.data.labels.shift();
+                energyChart.data.datasets[0].data.shift();
+            }
+
+            energyChart.update();
+
+            // Atualiza os valores dos cards do topo
+            document.getElementById('live-kw').innerText = `${randomValue} kW/h`;
+            document.getElementById('live-solar').innerText = `${solarValue} kW/h`;
+            document.getElementById('live-cost').innerText = `R$ ${estimatedCost}`;
+        }
+
+        // Executa a cada 2 segundos
+        setInterval(updateLiveSimulatedData, 2000);
+    </script>
+</body>
+</html>

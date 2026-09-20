@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoodWi AI - Assistente Especialista</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --card-bg: rgba(22, 31, 49, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            background: rgba(15, 23, 42, 0.9);
+            border-right: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem 1.2rem;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin-top: 2.5rem;
+        }
+
+        .nav-link-btn {
+            width: 100%;
+            color: var(--text-muted);
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link-btn:hover, .nav-link-btn.active {
+            color: #fff;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.05));
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        /* Chat Layout */
+        .chat-container {
+            height: 480px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-right: 0.5rem;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .chat-user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            color: #fff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-ia {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-input-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .custom-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 0.6rem 1rem;
+        }
+
+        .custom-input:focus {
+            background: transparent;
+            color: #fff;
+            box-shadow: none;
+        }
+
+        /* Quick Questions */
+        .suggestion-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.88rem;
+        }
+
+        .suggestion-card:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navegação -->
+    <aside class="sidebar">
+        <div>
+            <div class="brand-logo">
+                <i class="fa-solid fa-bolt"></i> GoodWi AI
+            </div>
+            <ul class="nav-menu">
+    <li>
+        <a href="{% url 'home' %}" class="nav-link-btn">
+            <i class="fa-solid fa-house"></i> Início (Menu)
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'grafico' %}" class="nav-link-btn">
+            <i class="fa-solid fa-chart-line"></i> Dashboard
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'ia' %}" class="nav-link-btn">
+            <i class="fa-solid fa-robot"></i> Assistente IA
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'perfil' %}" class="nav-link-btn">
+            <i class="fa-solid fa-sliders"></i> Unidade Consumidora
+        </a>
+    </li>
+</ul>
+        </div>
+        <div class="text-muted small">
+            <i class="fa-solid fa-shield-halved"></i> GoodWi Insight v1.0
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="fw-bold m-0"><i class="fa-solid fa-robot text-primary me-2"></i>Assistente GoodWe & Energia</h3>
+                <p class="text-muted small m-0">Especialista em soluções GoodWe, recarga de VE, inversores e análise de consumo.</p>
+            </div>
+            <span class="badge bg-primary bg-opacity-20 text-primary border border-primary px-3 py-2">
+                <i class="fa-solid fa-brain me-1"></i> Gemini Flash Active
+            </span>
+        </div>
+
+        <div class="row g-4">
+            <!-- Painel de Chat Principal -->
+            <div class="col-lg-8">
+                <div class="glass-card">
+                    <div class="chat-container mb-3" id="chat-box">
+                        <div class="chat-message chat-ia">
+                            Olá! Sou o assistente inteligente focado nas soluções **GoodWe**.
+
+Como posso te ajudar hoje? Você pode perguntar sobre nossos inversores, carregadores para carros elétricos (EV), economia de energia solar ou sobre as métricas exibidas no seu dashboard.
+                        </div>
+                    </div>
+
+                    <div class="chat-input-box d-flex align-items-center gap-2">
+                        <input type="text" id="user-input" class="form-control custom-input" placeholder="Pergunte algo sobre a GoodWe, recarga VE ou economia de energia..." onkeypress="handleKeyPress(event)">
+                        <button class="btn btn-primary px-4 py-2" onclick="sendMessage()">
+                            <i class="fa-solid fa-paper-plane me-1"></i> Enviar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel Lateral de Perguntas Sugeridas -->
+            <div class="col-lg-4">
+                <div class="glass-card mb-3">
+                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-lightbulb text-warning me-2"></i>Perguntas Rápidas</h6>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="suggestion-card" onclick="sendQuickQuestion('O que a GoodWe faz e quais são seus principais produtos?')">
+                            > O que a GoodWe faz e quais seus produtos?
+                        </div>
+                        <div class="suggestion-card" onclick="sendQuickQuestion('Como funcionam as soluções de recarga para carros elétricos (VE)?')">
+                            > Como funcionam os carregadores de VE GoodWe?
+                        </div>
+                        <div class="suggestion-card" onclick="sendQuickQuestion('Como posso otimizar a economia de energia com inversores híbridos?')">
+                            > Como otimizar a economia de energia solar?
+                        </div>
+                        <div class="suggestion-card" onclick="sendQuickQuestion('O que significa o gráfico de oscilação de consumo em tempo real?')">
+                            >Como interpretar o gráfico do dashboard?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card text-muted small">
+                    <h6 class="fw-bold text-white mb-2"><i class="fa-solid fa-circle-info text-info me-2"></i>Escopo do Assistente</h6>
+                    <p class="m-0">Este chatbot responde exclusivamente sobre tópicos do ecossistema GoodWe, mobilidade elétrica, energia solar e métricas do painel.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript da Conversa -->
+    <script>
+        function sendQuickQuestion(questionText) {
+            document.getElementById('user-input').value = questionText;
+            sendMessage();
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+
+            chatBox.innerHTML += `<div class="chat-message chat-user">${escapeHtml(message)}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Insere indicador de carregamento
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `
+                <div class="chat-message chat-ia" id="${loadingId}">
+                    <i class="fa-solid fa-spinner fa-spin me-2 text-primary"></i>Consultando base de dados GoodWe...
+                </div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const formData = new FormData();
+                formData.append('prompt', message);
+
+                const response = await fetch("{% url 'ask_gemini' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                const reply = data.reply || "Desculpe, não consegui obter uma resposta adequada no momento.";
+
+                document.getElementById(loadingId).innerText = reply;
+            } catch (error) {
+                document.getElementById(loadingId).innerText = "Erro na comunicação com o servidor backend.";
+            }
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+    </script>
+</body>
+</html>
