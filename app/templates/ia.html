@@ -18,6 +18,7 @@
             --border-color: rgba(255, 255, 255, 0.08);
             --accent-green: #10b981;
             --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
         }
@@ -30,7 +31,7 @@
             margin: 0;
         }
 
-        /* Sidebar Styling */
+        /* Sidebar Navegação */
         .sidebar {
             width: 260px;
             background: rgba(15, 23, 42, 0.9);
@@ -84,10 +85,10 @@
             border-left: 4px solid var(--accent-blue);
         }
 
-        /* Main Content Layout */
+        /* Layout Conteúdo Principal */
         .main-content {
             margin-left: 260px;
-            padding: 2rem;
+            padding: 2.5rem;
         }
 
         .glass-card {
@@ -95,7 +96,8 @@
             border: 1px solid var(--border-color);
             backdrop-filter: blur(16px);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 2rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
         /* Chat Layout */
@@ -180,27 +182,32 @@
                 <i class="fa-solid fa-bolt"></i> GoodWi AI
             </div>
             <ul class="nav-menu">
-    <li>
-        <a href="{% url 'home' %}" class="nav-link-btn">
-            <i class="fa-solid fa-house"></i> Início (Menu)
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'grafico' %}" class="nav-link-btn">
-            <i class="fa-solid fa-chart-line"></i> Dashboard
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'ia' %}" class="nav-link-btn">
-            <i class="fa-solid fa-robot"></i> Assistente IA
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'perfil' %}" class="nav-link-btn">
-            <i class="fa-solid fa-sliders"></i> Unidade Consumidora
-        </a>
-    </li>
-</ul>
+                <li>
+                    <a href="{% url 'home' %}" class="nav-link-btn">
+                        <i class="fa-solid fa-house"></i> Início (Menu)
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'grafico' %}" class="nav-link-btn">
+                        <i class="fa-solid fa-chart-line"></i> Gestão VE & Solar
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'ia' %}" class="nav-link-btn active">
+                        <i class="fa-solid fa-robot"></i> Assistente IA
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'perfil' %}" class="nav-link-btn">
+                        <i class="fa-solid fa-sliders"></i> Unidade Consumidora
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'sus' %}" class="nav-link-btn">
+                        <i class="fa-solid fa-leaf"></i> Sustentabilidade
+                    </a>
+                </li>
+            </ul>
         </div>
         <div class="text-muted small">
             <i class="fa-solid fa-shield-halved"></i> GoodWi Insight v1.0
@@ -209,9 +216,9 @@
 
     <!-- Conteúdo Principal -->
     <main class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold m-0"><i class="fa-solid fa-robot text-primary me-2"></i>Assistente GoodWe & Energia</h3>
+                <h2 class="fw-bold m-0"><i class="fa-solid fa-robot text-primary me-2"></i>Assistente GoodWe & Energia</h2>
                 <p class="text-muted small m-0">Especialista em soluções GoodWe, recarga de VE, inversores e análise de consumo.</p>
             </div>
             <span class="badge bg-primary bg-opacity-20 text-primary border border-primary px-3 py-2">
@@ -225,7 +232,7 @@
                 <div class="glass-card">
                     <div class="chat-container mb-3" id="chat-box">
                         <div class="chat-message chat-ia">
-                            Olá! Sou o assistente inteligente focado nas soluções **GoodWe**.
+Olá! Sou o assistente inteligente focado nas soluções **GoodWe**.
 
 Como posso te ajudar hoje? Você pode perguntar sobre nossos inversores, carregadores para carros elétricos (EV), economia de energia solar ou sobre as métricas exibidas no seu dashboard.
                         </div>
@@ -233,7 +240,7 @@ Como posso te ajudar hoje? Você pode perguntar sobre nossos inversores, carrega
 
                     <div class="chat-input-box d-flex align-items-center gap-2">
                         <input type="text" id="user-input" class="form-control custom-input" placeholder="Pergunte algo sobre a GoodWe, recarga VE ou economia de energia..." onkeypress="handleKeyPress(event)">
-                        <button class="btn btn-primary px-4 py-2" onclick="sendMessage()">
+                        <button class="btn btn-primary px-4 py-2 fw-semibold" onclick="sendMessage()">
                             <i class="fa-solid fa-paper-plane me-1"></i> Enviar
                         </button>
                     </div>
@@ -243,7 +250,7 @@ Como posso te ajudar hoje? Você pode perguntar sobre nossos inversores, carrega
             <!-- Painel Lateral de Perguntas Sugeridas -->
             <div class="col-lg-4">
                 <div class="glass-card mb-3">
-                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-lightbulb text-warning me-2"></i>Perguntas Rápidas</h6>
+                    <h6 class="fw-bold mb-3 text-white"><i class="fa-solid fa-lightbulb text-warning me-2"></i>Perguntas Rápidas</h6>
                     <div class="d-flex flex-column gap-2">
                         <div class="suggestion-card" onclick="sendQuickQuestion('O que a GoodWe faz e quais são seus principais produtos?')">
                             > O que a GoodWe faz e quais seus produtos?
@@ -255,10 +262,14 @@ Como posso te ajudar hoje? Você pode perguntar sobre nossos inversores, carrega
                             > Como otimizar a economia de energia solar?
                         </div>
                         <div class="suggestion-card" onclick="sendQuickQuestion('O que significa o gráfico de oscilação de consumo em tempo real?')">
-                            >Como interpretar o gráfico do dashboard?
+                            > Como interpretar o gráfico do dashboard?
                         </div>
                     </div>
                 </div>
+
+
+                </div>
+            </div>
 
                 <div class="glass-card text-muted small">
                     <h6 class="fw-bold text-white mb-2"><i class="fa-solid fa-circle-info text-info me-2"></i>Escopo do Assistente</h6>
@@ -285,7 +296,6 @@ Como posso te ajudar hoje? Você pode perguntar sobre nossos inversores, carrega
             const message = input.value.trim();
 
             if (!message) return;
-
 
             chatBox.innerHTML += `<div class="chat-message chat-user">${escapeHtml(message)}</div>`;
             input.value = '';

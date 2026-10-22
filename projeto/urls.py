@@ -1,30 +1,18 @@
-"""
-URL configuration for projeto project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
-from app.views import home, get_live_data, ia, grafico,ask_gemini,perfil
+from app.views import home, sistemas, get_live_data, ia, grafico, ask_gemini, perfil, toggle_ev_charger, sus, \
+    remove_button
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home,name='home'),
-    path('api/live-data/', get_live_data, name='live_data'),
-    path('ia/',ia,name='ia'),
-    path('grafico/',grafico,name='grafico'),
+    path('', home, name='home'),
+    path('ia/', ia, name='ia'),
+    path('grafico/', grafico, name='grafico'),
     path('perfil/', perfil, name='perfil'),
     path('api/live-data/', get_live_data, name='live_data'),
     path('api/ask-gemini/', ask_gemini, name='ask_gemini'),
+    path('api/toggle-ev-charger/', toggle_ev_charger, name='toggle_ev_charger'),
+    path('sus/',sus,name='sus'),
+    path('sistemas/',sistemas,name='sistemas'),
+    path('remove_button/',remove_button,name='remove_button')
 ]

@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoodWi Insight AI - Dashboard</title>
+    <title>GoodWi AI - Central de Recarga & Dashboard</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js para o Gráfico -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
             --bg-dark: #0b0f19;
-            --card-bg: rgba(22, 31, 49, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(22, 31, 49, 0.85);
+            --border-color: rgba(255, 255, 255, 0.12);
             --accent-green: #10b981;
             --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
             --accent-yellow: #f59e0b;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --text-main: #ffffff;
+            --text-sub: #cbd5e1; /* Cor mais clara para leitura perfeita */
+            --text-muted: #94a3b8;
         }
 
         body {
@@ -33,10 +33,9 @@
             margin: 0;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             width: 260px;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.95);
             border-right: 1px solid var(--border-color);
             backdrop-filter: blur(12px);
             height: 100vh;
@@ -83,11 +82,10 @@
 
         .nav-link-btn:hover, .nav-link-btn.active {
             color: #fff;
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.05));
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.1));
             border-left: 4px solid var(--accent-blue);
         }
 
-        /* Main Layout */
         .main-content {
             margin-left: 260px;
             padding: 2.5rem;
@@ -98,39 +96,45 @@
             border: 1px solid var(--border-color);
             backdrop-filter: blur(16px);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 1.8rem;
         }
 
-        .metric-title {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-sub);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: left;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .metric-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-top: 0.3rem;
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
         }
 
-        .status-badge {
-            font-size: 0.75rem;
-            padding: 0.3rem 0.6rem;
-            border-radius: 20px;
-            font-weight: 600;
+        .mode-btn.active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent-green);
+            color: #fff;
         }
 
-        .chart-container {
-            position: relative;
-            height: 380px;
-            width: 100%;
+        .metric-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+
+        /* Ajuste do Slider de Bateria */
+        .form-range::-webkit-slider-thumb {
+            background: var(--accent-green);
         }
     </style>
 </head>
 <body>
-
 
     <aside class="sidebar">
         <div>
@@ -138,184 +142,163 @@
                 <i class="fa-solid fa-bolt"></i> GoodWi AI
             </div>
             <ul class="nav-menu">
-    <li>
-        <a href="{% url 'home' %}" class="nav-link-btn">
-            <i class="fa-solid fa-house"></i> Início (Menu)
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'grafico' %}" class="nav-link-btn">
-            <i class="fa-solid fa-chart-line"></i> Dashboard
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'ia' %}" class="nav-link-btn">
-            <i class="fa-solid fa-robot"></i> Assistente IA
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'perfil' %}" class="nav-link-btn">
-            <i class="fa-solid fa-sliders"></i> Unidade Consumidora
-        </a>
-    </li>
-</ul>
+                <li>
+                    <a href="{% url 'home' %}" class="nav-link-btn">
+                        <i class="fa-solid fa-house"></i> Início (Menu)
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'grafico' %}" class="nav-link-btn active">
+                        <i class="fa-solid fa-car-battery"></i> Gestão VE & Solar
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'ia' %}" class="nav-link-btn">
+                        <i class="fa-solid fa-robot"></i> Assistente IA
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'perfil' %}" class="nav-link-btn">
+                        <i class="fa-solid fa-sliders"></i> Unidade Consumidora
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'sus' %}" class="nav-link-btn">
+                        <i class="fa-solid fa-leaf"></i> Sustentabilidade
+                    </a>
+                </li>
+            </ul>
         </div>
         <div class="text-muted small">
             <i class="fa-solid fa-shield-halved"></i> GoodWi Insight v1.0
         </div>
     </aside>
 
-
     <main class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold m-0">Monitoramento Energético em Tempo Real</h2>
-                <p class="text-muted small m-0">Simulação de consumo residencial instantâneo acoplado à rede GoodWi.</p>
-            </div>
-            <span class="status-badge bg-success bg-opacity-20 text-success border border-success">
-                <i class="fa-solid fa-circle-dot me-1 fa-beat"></i> Ao Vivo
-            </span>
+        <div class="mb-4">
+            <h2 class="fw-bold m-0"><i class="fa-solid fa-charging-station text-success me-2"></i>Central de Recarga & Gestão GoodWe HCA</h2>
+            <p class="text-sub small m-0">Otimização e simulação em tempo real da recarga de veículos elétricos e microgeração fotovoltaica.</p>
         </div>
 
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="glass-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="metric-title">Consumo Atual</span>
-                        <i class="fa-solid fa-bolt text-warning fs-5"></i>
-                    </div>
-                    <div class="metric-value text-warning" id="live-kw">3.4 kW/h</div>
-                    <span class="small text-muted"><i class="fa-solid fa-arrow-up text-danger me-1"></i>Oscilação padrão</span>
+        <!-- Linha Superior: Simulação de Bateria do Carro -->
+        <div class="glass-card mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="fw-bold text-white mb-2"><i class="fa-solid fa-battery-three-quarters text-warning me-2"></i>Simulador de Carga do Veículo Elétrico</h5>
+                    <p class="text-sub small m-0">Ajuste a porcentagem atual da bateria do carro para simular o tempo de carregamento e a energia necessária do inversor GoodWe.</p>
                 </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="glass-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="metric-title">Geração Solar (Placa)</span>
-                        <i class="fa-solid fa-sun text-success fs-5"></i>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-3">
+                        <input type="range" class="form-range" id="batteryRange" min="10" max="100" value="35" oninput="updateSimulation()">
+                        <span class="badge bg-success fs-6 px-3 py-2" id="batteryPercent">35%</span>
                     </div>
-                    <div class="metric-value text-success" id="live-solar">1.8 kW/h</div>
-                    <span class="small text-muted"><i class="fa-solid fa-leaf text-success me-1"></i>Eficiência 82%</span>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="glass-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="metric-title">Custo Estimado (Hora)</span>
-                        <i class="fa-solid fa-wallet text-info fs-5"></i>
-                    </div>
-                    <div class="metric-value text-info" id="live-cost">R$ 2.45</div>
-                    <span class="small text-muted">Tarifa residencial média</span>
                 </div>
             </div>
         </div>
 
+        <div class="row g-4">
+            <!-- Painel de Seleção de Modos -->
+            <div class="col-lg-7">
+                <div class="glass-card h-100">
+                    <h5 class="fw-bold mb-3 text-white"><i class="fa-solid fa-sliders text-primary me-2"></i>Modo de Automação da Estação GoodWe</h5>
+                    <p class="text-sub small mb-4">Escolha a estratégia de carregamento do veículo para calcular a economia de tarifa e redução de emissões:</p>
 
-        <div class="glass-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold m-0"><i class="fa-solid fa-wave-square me-2 text-primary"></i>Fluxo de Consumo Elétrico (Tempo Real)</h5>
-                <div class="btn-group btn-group-sm">
-                    <button class="btn btn-outline-secondary active">Ao Vivo</button>
-                    <button class="btn btn-outline-secondary">24h</button>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="mode-btn active" id="mode-eco" onclick="setMode('eco')">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold text-success"><i class="fa-solid fa-leaf me-2"></i>Modo Eco Solar (100% Excedente Solar)</span>
+                                <span class="badge bg-success text-white">Máxima Economia</span>
+                            </div>
+                            <p class="text-sub small m-0">Carrega o carro utilizando unicamente a sobra de energia gerada pelos painéis solares. Custo zero de rede elétrica.</p>
+                        </div>
+
+                        <div class="mode-btn" id="mode-fast" onclick="setMode('fast')">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold text-info"><i class="fa-solid fa-bolt me-2"></i>Modo Carga Rápida (Híbrido)</span>
+                            </div>
+                            <p class="text-sub small m-0">Combina a geração solar com a potência máxima da rede (7.4 kW) para acelerar a recarga do veículo.</p>
+                        </div>
+
+                        <div class="mode-btn" id="mode-smart" onclick="setMode('smart')">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold text-warning"><i class="fa-solid fa-brain me-2"></i>Gestão Inteligente de Demanda IA</span>
+                            </div>
+                            <p class="text-sub small m-0">Pausa a recarga nos horários de ponta e retoma quando houver maior insolação ou tarifa reduzida.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="chart-container">
-                <canvas id="energyChart"></canvas>
+            <!-- Painel de Resultados da Simulação -->
+            <div class="col-lg-5">
+                <div class="glass-card h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="fw-bold mb-4 text-white"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Resultados da Otimização</h5>
+
+                        <div class="metric-box mb-3">
+                            <span class="text-sub small text-uppercase d-block fw-semibold mb-1">Economia Estimada (Mês)</span>
+                            <h3 class="fw-bold text-success m-0" id="stat-economy">R$ 410,00</h3>
+                        </div>
+
+                        <div class="metric-box mb-3">
+                            <span class="text-sub small text-uppercase d-block fw-semibold mb-1">CO₂ Evitado no Período</span>
+                            <h3 class="fw-bold text-info m-0" id="stat-co2">156.0 kg</h3>
+                        </div>
+
+                        <div class="metric-box">
+                            <span class="text-sub small text-uppercase d-block fw-semibold mb-1">Tempo Estimado de Carga</span>
+                            <h3 class="fw-bold text-warning m-0" id="stat-time">2h 15min</h3>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button class="btn btn-success w-100 fw-bold py-2" onclick="applySettings()">
+                            <i class="fa-solid fa-check-circle me-2"></i>Aplicar ao Inversor GoodWe
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Script de Simulação em Tempo Real -->
     <script>
-        const ctx = document.getElementById('energyChart').getContext('2d');
+        let currentMode = 'eco';
 
-        // Gradiente azul bonito para o gráfico
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
-        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+        function updateSimulation() {
+            const val = document.getElementById('batteryRange').value;
+            document.getElementById('batteryPercent').innerText = `${val}%`;
 
-        // Dados Iniciais
-        const initialLabels = Array.from({length: 10}, (_, i) => {
-            const d = new Date(Date.now() - (9 - i) * 2000);
-            return d.toLocaleTimeString('pt-BR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        });
-        const initialData = [2.1, 2.5, 2.3, 3.1, 2.8, 3.4, 3.0, 3.6, 3.2, 3.4];
+            // Calcula o tempo proporcional restante
+            const remaining = 100 - val;
+            const hours = Math.floor((remaining * 0.05));
+            const mins = Math.round(((remaining * 0.05) % 1) * 60);
 
-        // Configuração do Chart.js
-        const energyChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: initialLabels,
-                datasets: [{
-                    label: 'Consumo Residencial (kW/h)',
-                    data: initialData,
-                    borderColor: '#3b82f6',
-                    borderWidth: 3,
-                    backgroundColor: gradient,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#3b82f6',
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: { color: '#9ca3af', font: { family: 'Plus Jakarta Sans' } }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#9ca3af' }
-                    },
-                    y: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#9ca3af' },
-                        suggestedMin: 1.0,
-                        suggestedMax: 5.0
-                    }
-                }
-            }
-        });
-
-        // Função para simular atualização em tempo real
-        function updateLiveSimulatedData() {
-            const now = new Date();
-            const timeLabel = now.toLocaleTimeString('pt-BR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-            // Gera valor randômico simulando variação real de energia (ex: entre 1.8kW e 4.5kW)
-            const randomValue = (Math.random() * (4.2 - 1.8) + 1.8).toFixed(1);
-            const solarValue = (Math.random() * (2.2 - 1.2) + 1.2).toFixed(1);
-            const estimatedCost = (randomValue * 0.72).toFixed(2);
-
-            // Atualiza o gráfico
-            energyChart.data.labels.push(timeLabel);
-            energyChart.data.datasets[0].data.push(randomValue);
-
-            // Mantém apenas os últimos 10 pontos na tela
-            if (energyChart.data.labels.length > 10) {
-                energyChart.data.labels.shift();
-                energyChart.data.datasets[0].data.shift();
-            }
-
-            energyChart.update();
-
-            // Atualiza os valores dos cards do topo
-            document.getElementById('live-kw').innerText = `${randomValue} kW/h`;
-            document.getElementById('live-solar').innerText = `${solarValue} kW/h`;
-            document.getElementById('live-cost').innerText = `R$ ${estimatedCost}`;
+            document.getElementById('stat-time').innerText = `${hours}h ${mins}min`;
         }
 
-        // Executa a cada 2 segundos
-        setInterval(updateLiveSimulatedData, 2000);
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(el => el.classList.remove('active'));
+
+            if(mode === 'eco') {
+                document.getElementById('mode-eco').classList.add('active');
+                document.getElementById('stat-economy').innerText = 'R$ 410,00';
+                document.getElementById('stat-co2').innerText = '156.0 kg';
+            } else if(mode === 'fast') {
+                document.getElementById('mode-fast').classList.add('active');
+                document.getElementById('stat-economy').innerText = 'R$ 185,00';
+                document.getElementById('stat-co2').innerText = '72.0 kg';
+            } else {
+                document.getElementById('mode-smart').classList.add('active');
+                document.getElementById('stat-economy').innerText = 'R$ 365,00';
+                document.getElementById('stat-co2').innerText = '138.0 kg';
+            }
+            updateSimulation();
+        }
+
+        function applySettings() {
+            alert('Parâmetros de recarga sincronizados com sucesso no inversor GoodWe!');
+        }
     </script>
 </body>
 </html>
